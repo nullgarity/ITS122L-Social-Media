@@ -1,10 +1,17 @@
 import React from 'react';
+import NavBar from './components/NavBar';
+import MakePost from './components/MakePost';
+import PostFeed from './components/PostFeed';
+import './Home.css'; // 👈 Add this line to load the CSS file
 
 export default function Home() {
   return (
-    <div>
-      <h1>Welcome</h1>
-      <p>Sign in or register</p>
+    <div className="home-container">
+      <NavBar />
+      <div className="feed-wrapper">
+        <MakePost />
+        <PostFeed />
+      </div>
     </div>
   );
 }

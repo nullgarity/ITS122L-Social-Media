@@ -1,0 +1,55 @@
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #ffffff;
+  padding: 10px 20px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.navbar-left .logo {
+  font-size: 24px;
+  font-weight: bold;
+  color: #1877f2; /* Facebook blue */
+}
+
+.navbar-center .nav-button {
+  padding: 8px 16px;
+  margin: 0 10px;
+  background-color: transparent;
+  border: 1px solid #ccc;
+  cursor: pointer;
+}
+
+.navbar-right {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.user-info {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.profile-pic {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+}
+
+.logout-button,
+.nav-button {
+  padding: 6px 12px;
+  background-color: #1877f2;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.logout-button:hover,
+.nav-button:hover {
+  background-color: #165ecc;
+}
