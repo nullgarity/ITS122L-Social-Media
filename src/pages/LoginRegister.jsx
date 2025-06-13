@@ -11,10 +11,9 @@ export default function LoginRegister() {
         <div className="home-box">
           <input type="text" placeholder="Email or phone number" />
           <input type="password" placeholder="Password" />
-          <button className="btn primary">Sign In</button>
+          <button className="btn signin">Sign In</button>
           <a href="#">Forgot password?</a>
-          <hr />
-          <button className="btn secondary">Register</button>
+          <button className="btn register">Register</button>
         </div>
       </div>
       <footer>

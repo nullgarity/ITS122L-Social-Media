@@ -16,12 +16,12 @@ body {
   justify-content: center;
   align-items: center;
   padding: 40px;
+  gap: 60px; /* space between logo and box */
 }
 
 .home-logo {
-  flex: 1;
   text-align: right;
-  padding-right: 40px;
+  padding-right: 0;
 }
 
 .home-logo h1 {
@@ -39,6 +39,7 @@ body {
   display: flex;
   flex-direction: column;
   gap: 12px;
+  align-items: center; /* centers form content */
 }
 
 .home-box input {
@@ -46,6 +47,8 @@ body {
   font-size: 16px;
   border: 1px solid #ddd;
   border-radius: 6px;
+  background-color: white;
+  color: black;
 }
 
 .btn {
@@ -56,12 +59,12 @@ body {
   cursor: pointer;
 }
 
-.btn.primary {
+.btn.signin {
   background-color: #1877f2;
   color: white;
 }
 
-.btn.secondary {
+.btn.register {
   background-color: #42b72a;
   color: white;
 }
