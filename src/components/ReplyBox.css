@@ -1,0 +1,55 @@
+.reply-box {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  background-color: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+  padding: 16px;
+  margin-top: 12px;
+}
+
+.reply-box-top {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+}
+
+.reply-profile-pic {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.reply-textarea {
+  flex: 1;
+  padding: 10px 12px;
+  font-size: 15px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  resize: none;
+  color: black;
+  background-color: #fff;
+  font-family: Arial, sans-serif;
+}
+
+.reply-post-button {
+  align-self: flex-end;
+  margin-top: 8px;
+  padding: 10px 16px;
+  background-color: #1877f2;
+  color: white;
+  font-weight: 600;
+  border: 1px solid #1877f2;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease;
+  font-size: 15px;
+}
+
+.reply-post-button:hover {
+  background-color: white;
+  border-color: #1877f2;
+  color: #1877f2;
+}
