@@ -12,3 +12,7 @@
   flex-direction: column;
   gap: 1rem;
 }
+
+.my-likes-title{
+  color: black;
+}

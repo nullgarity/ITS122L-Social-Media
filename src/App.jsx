@@ -1,4 +1,4 @@
-import NavBar from './components/NavBar'; // adjust the path as needed
+import NavBar from './components/NavBar';
 import './App.css';
 
 function App() {
@@ -7,7 +7,7 @@ function App() {
       <NavBar />
 
       <main className="main-content">
-        <h1>Vite + React</h1>
+        <h1>MySocial | Like, Post, and Reply to the World</h1>
         <div className="card">
           <button onClick={() => alert("Clicked!")}>
             Test Button

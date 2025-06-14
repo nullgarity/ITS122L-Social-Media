@@ -9,15 +9,14 @@ export default function LoginRegister() {
           <h1>MySocial</h1> {/* Placeholder logo */}
         </div>
         <div className="home-box">
-          <input type="text" placeholder="Email or phone number" />
+          <input type="text" placeholder="Email" />
           <input type="password" placeholder="Password" />
-          <button className="btn signin">Sign In</button>
-          <a href="#">Forgot password?</a>
-          <button className="btn register">Register</button>
+          <button className="btn signin-btn">Sign In</button>
+          <button className="btn register-btn">Register</button>
         </div>
       </div>
       <footer>
-        <p>&copy; 2025 MySocial</p>
+        <p>&copy;ITS122L Social Media | Mendoza, Fuensalida, Ercia, Panes, Tresvalles</p>
       </footer>
     </div>
   );

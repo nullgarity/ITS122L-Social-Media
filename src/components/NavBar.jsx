@@ -8,19 +8,19 @@ export default function NavBar() {
   const handleLogout = () => {
     // Optional: clear any auth state
     localStorage.removeItem("token");
-    navigate("/login"); // Navigate to LoginRegister page
+    navigate(""); // Navigate to LoginRegister page
   };
 
   return (
     <div className="navbar">
       <div className="navbar-left">
-        <div className="logo" onClick={() => navigate("/")}>
+        <div className="logo" onClick={() => navigate("/home")}>
           MySocial
         </div>
       </div>
 
       <div className="navbar-center">
-        <button className="nav-button home-button" onClick={() => window.location.reload()}>
+        <button className="nav-button home-button" onClick={() => navigate("/home")}>
           Home
         </button>
       </div>
