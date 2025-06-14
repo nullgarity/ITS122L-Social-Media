@@ -1,0 +1,33 @@
+.post-feed-container {
+  background-color: white;
+  max-width: 95vw;          /* almost full viewport width */
+  width: 100%;              /* take full width of parent but max capped */
+  margin: 30px auto;
+  padding: 20px;
+  border-radius: 8px;
+  box-sizing: border-box;   /* include padding inside width */
+  overflow-x: hidden;       /* hide horizontal overflow */
+}
+
+.post-feed-pagination {
+  display: flex;
+  justify-content: center;  /* center buttons horizontally */
+  gap: 10px;                /* small space between buttons */
+  margin-top: 20px;
+}
+
+.post-feed-pagination button {
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: 600;
+  padding: 8px 16px;
+  transition: background-color 0.2s ease;
+}
+
+.post-feed-pagination button:disabled {
+  background-color: #cccccc;
+  cursor: default;
+}
