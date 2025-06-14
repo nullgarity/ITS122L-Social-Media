@@ -7,15 +7,15 @@ export default function MakePost() {
   const handlePost = async () => {
     if (!content.trim()) return;
 
-    const response = await fetch('https://dummyapi.io/data/v1/post/create', {
+    const response = await fetch('https://supabase-socmed.vercel.app/', {
       method: 'POST',
       headers: {
-        'app-id': 'your-app-id', // 🔁 Replace with your actual App ID
+        'app-id': 'your-app-id', 
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
         text: content,
-        owner: 'user-id', // 🔁 Replace with actual user ID
+        owner: 'user-id', // 
         image: '',
       }),
     });
