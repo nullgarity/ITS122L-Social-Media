@@ -1,29 +1,36 @@
 import React, { useState } from 'react';
+import axios from '../api/axios'; // adjust path if needed
 import './MakePost.css';
 
-export default function MakePost() {
+export default function MakePost({ onPostCreated }) {
   const [content, setContent] = useState('');
 
   const handlePost = async () => {
     if (!content.trim()) return;
 
-    const response = await fetch('https://supabase-socmed.vercel.app/', {
-      method: 'POST',
-      headers: {
-        'app-id': 'your-app-id', 
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        text: content,
-        owner: 'user-id', // 
-        image: '',
-      }),
-    });
+    const token = localStorage.getItem('authToken');
+    if (!token) {
+      alert('You must be logged in to post.');
+      return;
+    }
 
-    if (response.ok) {
+    try {
+      const response = await axios.post(
+        '/post/create',
+        { content },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
       setContent('');
-      // 🔁 Optionally trigger feed refresh here
-    } else {
+      if (onPostCreated) {
+        onPostCreated(response.data); // send new post to parent
+      }
+    } catch (err) {
+      console.error('Post failed:', err);
       alert('Post failed.');
     }
   };

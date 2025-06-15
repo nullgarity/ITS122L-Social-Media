@@ -1,35 +1,44 @@
 import React from 'react';
-import './PostCard.css';
-import ReplyBox from './ReplyBox';
+import './PostCard.css'; // You can style this file separately
+import { useNavigate } from 'react-router-dom';
 
-export default function PostCard({ post }) {
-  const { owner, text, publishDate, replyCount = 0 } = post;
+const PostCard = ({ post }) => {
+  const navigate = useNavigate();
 
-  const formattedDate = new Date(publishDate).toLocaleString();
+  const handleCommentClick = () => {
+    navigate(`/post/${post.id}`);
+  };
+
+  const formatDate = (isoDate) => {
+    const date = new Date(isoDate);
+    return date.toLocaleString(); // e.g., "6/15/2025, 10:33:15 PM"
+  };
 
   return (
     <div className="post-card">
-      {/* User Info */}
       <div className="post-header">
-        <div className="user-info">
-          <img src={owner.picture} alt="Profile" className="profile-pic" />
-          <span className="user-name">{owner.firstName} {owner.lastName}</span>
+        {/* Since you only have owned_by UUID, no names/pics unless you fetch user info elsewhere */}
+        <div className="post-author">User ID: {post.owned_by}</div>
+        <div
+          className="post-date clickable"
+          onClick={() => navigate(`/post/${post.id}`)}
+        >
+          {formatDate(post.created_at)}
         </div>
-        <div className="post-date">{formattedDate}</div>
       </div>
 
-      {/* Post Content */}
       <div className="post-content">
-        {text}
+        {post.content}
       </div>
 
-      {/* Reply Count */}
-      <div className="reply-count">
-        {replyCount} {replyCount === 1 ? 'Reply' : 'Replies'}
+      <div className="post-actions">
+        <span>❤️ {post.likes?.[0]?.count ?? 0}</span>
+        <span className="clickable" onClick={handleCommentClick}>
+          💬 Comments ({post.replies?.[0]?.count ?? 0})
+        </span>
       </div>
-
-      {/* Reply Box */}
-      <ReplyBox postId={post.id} />
     </div>
   );
-}
+};
+
+export default PostCard;

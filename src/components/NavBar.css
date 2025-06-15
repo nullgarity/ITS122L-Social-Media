@@ -1,6 +1,5 @@
 .navbar {
   display: flex;
-  justify-content: center;
   align-items: center;
   background-color: #ffffff;
   padding: 16px 20px;
@@ -8,6 +7,7 @@
   width: 100%;
 }
 
+/* Layout: Left aligned left, centered center, right aligned right */
 .navbar-left,
 .navbar-center,
 .navbar-right {
@@ -16,18 +16,31 @@
   gap: 20px;
 }
 
-/* Optional: spread items across */
-.navbar > div {
+/* Take equal space but align content differently */
+.navbar-left {
+  flex: 1;
+  justify-content: flex-start;
+}
+
+.navbar-center {
   flex: 1;
   justify-content: center;
 }
 
+.navbar-right {
+  flex: 1;
+  justify-content: flex-end;
+}
+
+/* Logo styling */
 .logo {
   font-size: 24px;
   font-weight: bold;
   color: #1877f2;
+  cursor: pointer;
 }
 
+/* Button styling */
 .nav-button {
   background: transparent;
   border: none;
@@ -43,14 +56,18 @@
   color: #1877f2; /* Facebook blue on hover */
 }
 
+/* User info styling - aligned left within navbar-right */
 .user-info {
   display: flex;
   align-items: center;
   gap: 10px;
+  margin-right: 16px; /* Space between user info and buttons */
+  white-space: nowrap; /* Prevent text wrapping */
 }
 
 .profile-pic {
   width: 32px;
   height: 32px;
   border-radius: 50%;
+  object-fit: cover;
 }

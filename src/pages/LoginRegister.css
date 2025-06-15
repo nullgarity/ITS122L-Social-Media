@@ -4,6 +4,37 @@ body {
   background: #f0f2f5;
 }
 
+.status-msg {
+  height: 20px;                  /* Fully reserve vertical space */
+  color: black;
+  font-size: 16px;
+  text-align: center;
+  line-height: 20px;             /* Vertically center the text */
+  opacity: 1;
+  transition: opacity 0.2s ease;
+  margin: 0;                     /* Prevent unwanted spacing */
+  padding: 0;
+  overflow: hidden;
+}
+
+.status-msg:empty {
+  opacity: 0;
+}
+
+.status-msg.fade-out {
+  opacity: 0;
+  transition: opacity 0.5s ease 1s; /* fade out after 1s */
+}
+
+.status-msg-register, .status-msg-signin {
+  color: black;
+  font-size: 14px;
+  text-align: center;
+  min-height: 24px;
+  max-width: 280px;
+  word-wrap: break-word;
+}
+
 .home-container {
   display: flex;
   flex-direction: column;
@@ -59,12 +90,12 @@ body {
   cursor: pointer;
 }
 
-.btn.signin {
+.btn.login-btn {
   background-color: #1877f2;
   color: white;
 }
 
-.btn.register {
+.btn.register-btn {
   background-color: #42b72a;
   color: white;
 }
