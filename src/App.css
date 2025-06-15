@@ -3,10 +3,14 @@
   margin: 0;
   padding: 0;
   text-align: left;
+  background-color: var(--bg-color);
+  color: var(--text-color);
+  min-height: 100vh;
 }
 
 * {
   box-sizing: border-box;
+  transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 @keyframes logo-spin {
@@ -26,8 +30,10 @@
 
 .card {
   padding: 2em;
+  background-color: var(--card-bg);
+  border-radius: 8px;
 }
 
 .read-the-docs {
-  color: #888;
+  color: var(--secondary-text);
 }
