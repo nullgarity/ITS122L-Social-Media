@@ -1,50 +1,54 @@
+// src/pages/Home.jsx
 import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import api from '../api/axios';
 import NavBar from '../components/NavBar';
 import MakePost from '../components/MakePost';
 import PostFeed from '../components/PostFeed';
-import api from '../api/axios';
-import { useNavigate } from 'react-router-dom';
-import './Home.css';
 
-export default function Home() {
-  const [user, setUser] = useState(null);
+function Home() {
   const navigate = useNavigate();
+  const [user, setUser] = useState(null);
 
   useEffect(() => {
-    const token = localStorage.getItem('authToken');
+    const token = localStorage.getItem('access_token');
+
     if (!token) {
+      console.warn('No token in localStorage');
       navigate('/login');
       return;
     }
 
     const fetchUser = async () => {
       try {
-        const res = await api.get('/user', {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
-        setUser(res.data);
+        const res = await api.get('/user');
+        console.log('Fetched user:', res.data);
+        if (res.data && res.data.email) {
+          setUser(res.data);
+        } else {
+          console.warn('Invalid user data received:', res.data);
+          navigate('/login');
+        }
       } catch (err) {
         console.error('Failed to fetch user:', err);
-        navigate('/login');
+        navigate('/login'); // only if you want to auto-kick on error
       }
     };
 
     fetchUser();
   }, [navigate]);
 
-  if (!user) {
-    return <p>Loading...</p>; // optionally replace with a spinner
-  }
+  if (!user) return <p>Loading...</p>;
 
   return (
-    <div className="home-container">
-      <NavBar user={user} /> {/* Pass user to NavBar */}
-      <div className="feed-wrapper">
-        <MakePost />
-        <PostFeed />
+    <>
+      <NavBar user={user} />
+      <div className="container">
+        <MakePost user={user} />
+        <PostFeed user={user} />
       </div>
-    </div>
+    </>
   );
 }
+
+export default Home;

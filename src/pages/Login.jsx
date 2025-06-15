@@ -23,12 +23,13 @@ export default function Login() {
       });
 
       const token = res.data?.access_token;
+
       if (token) {
-        localStorage.setItem('authToken', token);
+        localStorage.setItem('access_token', token);
         setMessage('Login successful!');
-        setTimeout(() => navigate('/home'), 1000);
+        setTimeout(() => navigate('/home'), 800);
       } else {
-        setMessage('Login successful but no token received.');
+        setMessage('Login succeeded but token missing.');
       }
     } catch (err) {
       console.error('Login error:', err);

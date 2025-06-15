@@ -1,0 +1,46 @@
+.reply-card {
+  background-color: #f5f6f7;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 12px 16px;
+  margin: 10px 0 10px 50px; /* indented to show reply is a child */
+  display: flex;
+  font-size: 15px;
+  color: #000;
+}
+
+.reply-avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  margin-right: 12px;
+  object-fit: cover;
+}
+
+.reply-content-block {
+  flex: 1;
+}
+
+.reply-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 4px;
+}
+
+.reply-header strong {
+  font-size: 15px;
+  font-weight: 600;
+  color: #050505;
+}
+
+.reply-date {
+  font-size: 13px;
+  color: #65676b;
+}
+
+.reply-body {
+  font-size: 15px;
+  line-height: 1.5;
+  color: #050505;
+}
