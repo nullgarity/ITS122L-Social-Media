@@ -1,0 +1,64 @@
+.message-input-container {
+  padding: 16px;
+  background: white;
+  border-top: 1px solid #e4e6ea;
+}
+
+.message-input-wrapper {
+  display: flex;
+  align-items: flex-end;
+  gap: 8px;
+  background: #f0f2f5;
+  border-radius: 20px;
+  padding: 8px 12px;
+}
+
+.message-input {
+  flex: 1;
+  border: none;
+  background: transparent;
+  resize: none;
+  outline: none;
+  font-size: 15px;
+  line-height: 1.33;
+  color: #1c1e21;
+  min-height: 20px;
+  max-height: 100px;
+  font-family: inherit;
+}
+
+.message-input::placeholder {
+  color: #65676b;
+}
+
+.send-button {
+  background: #1877f2;
+  border: none;
+  border-radius: 50%;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+  font-size: 16px;
+}
+
+.send-button:hover:not(:disabled) {
+  background: #166fe5;
+}
+
+.send-button:disabled {
+  background: #bcc0c4;
+  cursor: not-allowed;
+}
+
+.send-button:disabled:hover {
+  background: #bcc0c4;
+}
+
+/* Auto-resize textarea */
+.message-input {
+  overflow-y: hidden;
+}

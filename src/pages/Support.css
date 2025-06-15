@@ -1,0 +1,133 @@
+.support-container {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  min-height: 100vh;
+  padding: 2rem;
+  background: #f9f9f9;
+  font-family: 'Inter', sans-serif;
+}
+
+.support-card {
+  background: #fff;
+  border-radius: 16px;
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.08);
+  padding: 2.5rem;
+  width: 100%;
+  max-width: 600px;
+  margin: 2rem auto;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.support-card h1 {
+  font-size: 2rem;
+  font-weight: 600;
+  color: #000;
+  margin-bottom: 2rem;
+  text-align: center;
+}
+
+.support-section {
+  margin-bottom: 2.5rem;
+}
+
+.support-section h2 {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #000;
+  margin-bottom: 1rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 2px solid #f0f0f0;
+}
+
+.support-section ul {
+  list-style-type: none;
+  padding: 0;
+}
+
+.support-section li {
+  margin-bottom: 0.75rem;
+  padding-left: 1.5rem;
+  position: relative;
+  color: #333;
+}
+
+.support-section li::before {
+  content: "•";
+  position: absolute;
+  left: 0;
+  color: #000;
+}
+
+.contact-options {
+  margin-top: 1.5rem;
+}
+
+.contact-option {
+  background: #f8f8f8;
+  border-radius: 12px;
+  padding: 1.5rem;
+  margin-bottom: 1rem;
+}
+
+.contact-option h3 {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #000;
+  margin-bottom: 0.5rem;
+}
+
+.contact-option a {
+  color: #000;
+  text-decoration: none;
+  font-weight: 500;
+  display: inline-block;
+  margin-bottom: 0.5rem;
+}
+
+.contact-option a:hover {
+  text-decoration: underline;
+}
+
+.contact-option p {
+  color: #666;
+  font-size: 0.9rem;
+  margin: 0;
+}
+
+.support-actions {
+  margin-top: 2.5rem;
+  text-align: center;
+}
+
+.back-button {
+  display: inline-flex;
+  align-items: center;
+  color: #000;
+  text-decoration: none;
+  font-weight: 500;
+  padding: 0.75rem 1.5rem;
+  border-radius: 8px;
+  background: #f0f0f0;
+  transition: all 0.2s ease;
+}
+
+.back-button:hover {
+  background: #e0e0e0;
+  transform: translateY(-1px);
+}
+
+@media (max-width: 600px) {
+  .support-container {
+    padding: 1rem;
+  }
+
+  .support-card {
+    padding: 1.5rem;
+    margin: 1rem;
+  }
+
+  .support-card h1 {
+    font-size: 1.75rem;
+  }
+}

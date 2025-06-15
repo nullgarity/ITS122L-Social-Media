@@ -1,117 +1,155 @@
 .post-card {
-  background-color: var(--card-bg);
-  border: 1px solid var(--border-color);
-  border-radius: 10px;
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  margin-bottom: 16px;
   padding: 16px;
-  margin: 16px 0;
-  font-size: 16px;
-  font-family: inherit;
-  color: var(--text-color);
+  transition: box-shadow 0.2s ease;
+}
+
+.post-card:hover {
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
 }
 
 .post-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
   margin-bottom: 12px;
 }
 
-.post-author-left {
+.post-author-info {
   display: flex;
   align-items: center;
+  cursor: pointer;
+  transition: opacity 0.2s ease;
 }
 
-.post-author-pic {
+.post-author-info:hover {
+  opacity: 0.8;
+}
+
+.post-author-avatar {
   width: 40px;
   height: 40px;
-  object-fit: cover;
   border-radius: 50%;
-  margin-right: 10px;
-  border: 1px solid var(--border-color);
+  margin-right: 12px;
+  object-fit: cover;
 }
 
-.post-author-info {
-  font-size: 16px;
-  color: var(--text-color);
+.post-author-details {
+  flex: 1;
+}
+
+.post-author-name {
+  font-weight: 600;
+  color: #1c1e21;
+  font-size: 15px;
 }
 
 .post-date {
-  font-size: 16px;
-  color: var(--secondary-text);
-  cursor: pointer;
+  color: #65676b;
+  font-size: 13px;
+  margin-top: 2px;
+}
+
+.post-date.clickable:hover {
+  text-decoration: underline;
 }
 
 .post-content {
-  margin: 12px 0;
-  font-size: 16px;
-  color: var(--text-color);
+  color: #1c1e21;
+  font-size: 15px;
+  line-height: 1.33;
+  margin-bottom: 12px;
+  white-space: pre-wrap;
+}
+
+.read-more {
+  color: #1877f2;
+  cursor: pointer;
+  font-weight: 500;
+}
+
+.read-more:hover {
+  text-decoration: underline;
+}
+
+.post-stats {
+  display: flex;
+  justify-content: space-between;
+  padding: 8px 0;
+  border-bottom: 1px solid #e4e6ea;
+  margin-bottom: 8px;
+  color: #65676b;
+  font-size: 13px;
+}
+
+.post-stat {
+  cursor: pointer;
+}
+
+.post-stat:hover {
+  text-decoration: underline;
 }
 
 .post-actions {
   display: flex;
   justify-content: space-around;
-  margin: 12px 0;
-  border-top: 1px solid var(--border-color);
-  border-bottom: 1px solid var(--border-color);
-  padding: 8px 0;
+  gap: 8px;
 }
 
-.post-actions .segment {
-  width: 100%;
-  text-align: center;
-  font-size: 16px;
-  padding: 6px 0;
-  transition: background 0.2s ease;
-  cursor: pointer;
-  color: var(--text-color);
-  font-weight: 500;
-}
-
-.post-actions .segment:hover {
-  background-color: var(--button-hover-bg);
-}
-
-.reply-box {
-  width: 100%;
-  font-size: 16px;
-  padding: 8px;
-  margin-top: 10px;
-  border: 1px solid var(--border-color);
-  border-radius: 6px;
-  background-color: var(--card-bg);
-  color: var(--text-color);
-  font-family: inherit;
-  resize: none;
-}
-
-button[type="submit"] {
-  margin-top: 6px;
-  font-size: 16px;
-  padding: 6px 12px;
-  background-color: var(--primary-color);
-  color: white;
+.action-button {
+  flex: 1;
+  background: none;
   border: none;
+  padding: 8px 12px;
   border-radius: 6px;
   cursor: pointer;
-  transition: all 0.2s;
+  font-size: 15px;
+  font-weight: 600;
+  color: #65676b;
+  transition: background-color 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
 }
 
-button[type="submit"]:hover {
-  opacity: 0.9;
+.action-button:hover {
+  background-color: #f0f2f5;
 }
 
-.reply-list {
-  margin-top: 10px;
-  padding-left: 10px;
-  border-left: 2px solid var(--border-color);
+.like-button:hover {
+  color: #1877f2;
 }
 
-.reply-item {
-  margin-bottom: 10px;
-  font-size: 16px;
-  color: var(--text-color);
+.comment-button:hover {
+  color: #42b883;
+}
+
+.share-button:hover {
+  color: #f39c12;
 }
 
 .clickable {
   cursor: pointer;
+}
+
+.reaction-container {
+  position: relative;
+  flex: 1;
+}
+
+@media (max-width: 768px) {
+  .post-card {
+    margin-bottom: 12px;
+    padding: 12px;
+  }
+  
+  .post-actions {
+    flex-direction: column;
+    gap: 4px;
+  }
+  
+  .action-button {
+    padding: 12px;
+  }
 }
