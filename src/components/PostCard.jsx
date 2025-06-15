@@ -81,7 +81,7 @@ const PostCard = ({ post, onCommentClick }) => {
           </div>
         </div>
         <div className="post-date clickable" onClick={handleDateClick}>
-          {new Date(post.createdAt).toLocaleString()}
+          {new Date(post.created_at).toLocaleString()}
         </div>
       </div>
 
