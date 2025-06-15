@@ -91,7 +91,7 @@ const PostCard = ({ post, onCommentClick }) => {
         <div className="segment" onClick={handleToggleLike}>
           {liked ? 'Unlike' : 'Like'} ({likeCount})
         </div>
-        <div className="segment clickable" onClick={handleDateClick}>
+        <div className="segment clickable" onClick={() => onCommentClick?.(post.id)}>
           Comments ({typeof post.commentsCount === 'number' ? post.commentsCount : 0})
         </div>
       </div>
