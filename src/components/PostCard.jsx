@@ -8,7 +8,10 @@ const PostCard = ({ post, onCommentClick }) => {
   const token = localStorage.getItem('access_token');
 
   const [liked, setLiked] = useState(false);
-  const [likeCount, setLikeCount] = useState(post.likes || 0);
+  // FIX: Handle both object ({ count: number }) and number cases for post.likes
+  const [likeCount, setLikeCount] = useState(
+    typeof post.likes === 'object' ? post.likes.count : post.likes || 0
+  );
 
   useEffect(() => {
     const likedPosts = JSON.parse(localStorage.getItem('likedPosts') || '[]');
