@@ -1,16 +1,19 @@
 import React from 'react';
 import './NavBar.css';
 import { useNavigate } from 'react-router-dom';
-import { useContext } from 'react';
-import { ThemeContext } from '../contexts/ThemeContext';
 
 export default function NavBar({ user }) {
   const navigate = useNavigate();
-  const { theme, toggleTheme } = useContext(ThemeContext);
 
   const handleLogout = () => {
     localStorage.removeItem('authToken');
     navigate('/login');
+  };
+
+  const handleProfileClick = () => {
+    if (user?.id) {
+      navigate(`/profile/${user.id}`);
+    }
   };
 
   return (
@@ -22,29 +25,48 @@ export default function NavBar({ user }) {
       </div>
 
       <div className="navbar-center">
-        <button className="nav-button home-button" onClick={() => navigate('/home')}>
-          Home
+        <button 
+          className="nav-button home-button" 
+          onClick={() => navigate('/home')}
+          title="Home"
+        >
+          🏠 Home
+        </button>
+        <button 
+          className="nav-button messenger-button" 
+          onClick={() => navigate('/messenger')}
+          title="Messenger"
+        >
+          💬 Messenger
         </button>
       </div>
 
       <div className="navbar-right">
-        <button className="theme-toggle" onClick={toggleTheme}>
-          {theme === 'light' ? '🌙' : '☀️'}
-        </button>
-        <div className="user-info">
+        <div className="user-info" onClick={handleProfileClick}>
           <img
-            src={user.profile_picture || 'https://via.placeholder.com/30'}
+            src={user?.profile_picture || 'https://images.pexels.com/photos/771742/pexels-photo-771742.jpeg?auto=compress&cs=tinysrgb&w=40&h=40&fit=crop'}
             alt="Profile"
             className="profile-pic"
           />
-          <span>{user.fName} {user.lName}</span>
+          <span className="user-name">{user?.fName} {user?.lName}</span>
         </div>
-        <button className="nav-button mylikes-button" onClick={() => navigate('/my-likes')}>
-          My Likes
-        </button>
-        <button className="nav-button logout-button" onClick={handleLogout}>
-          Logout
-        </button>
+        
+        <div className="navbar-actions">
+          <button 
+            className="nav-button mylikes-button" 
+            onClick={() => navigate('/my-likes')}
+            title="My Likes"
+          >
+            ❤️
+          </button>
+          <button 
+            className="nav-button logout-button" 
+            onClick={handleLogout}
+            title="Logout"
+          >
+            🚪 Logout
+          </button>
+        </div>
       </div>
     </div>
   );

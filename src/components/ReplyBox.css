@@ -1,0 +1,100 @@
+.reply-box {
+  padding: 12px 0;
+  border-bottom: 1px solid #f0f2f5;
+}
+
+.reply-box-top {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+}
+
+.reply-profile-pic {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  object-fit: cover;
+  flex-shrink: 0;
+}
+
+.reply-input-container {
+  flex: 1;
+  display: flex;
+  align-items: flex-end;
+  gap: 8px;
+  background: #f0f2f5;
+  border-radius: 20px;
+  padding: 8px 12px;
+}
+
+.reply-textarea {
+  flex: 1;
+  border: none;
+  background: transparent;
+  resize: none;
+  outline: none;
+  font-size: 14px;
+  line-height: 1.33;
+  color: #1c1e21;
+  font-family: inherit;
+  min-height: 18px;
+  max-height: 80px;
+}
+
+.reply-textarea::placeholder {
+  color: #65676b;
+}
+
+.reply-post-button {
+  background: #1877f2;
+  border: none;
+  border-radius: 50%;
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+  font-size: 14px;
+  flex-shrink: 0;
+}
+
+.reply-post-button:hover:not(:disabled) {
+  background: #166fe5;
+}
+
+.reply-post-button:disabled {
+  background: #bcc0c4;
+  cursor: not-allowed;
+}
+
+/* Auto-resize textarea */
+.reply-textarea {
+  overflow-y: hidden;
+}
+
+@media (max-width: 768px) {
+  .reply-box {
+    padding: 8px 0;
+  }
+  
+  .reply-profile-pic {
+    width: 28px;
+    height: 28px;
+  }
+  
+  .reply-input-container {
+    padding: 6px 10px;
+  }
+  
+  .reply-textarea {
+    font-size: 13px;
+  }
+  
+  .reply-post-button {
+    width: 24px;
+    height: 24px;
+    font-size: 12px;
+  }
+}

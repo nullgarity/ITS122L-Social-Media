@@ -1,82 +1,94 @@
-// src/components/Login.jsx
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import api from '../api/axios';
-import './LoginRegister.css';
+import './Login.css';
 
 export default function Login() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [message, setMessage] = useState('');
+  const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
-  const handleLogin = async () => {
-    if (!email || !password) {
-      setMessage('Please enter both email and password.');
-      return;
-    }
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setError('');
+    setLoading(true);
 
     try {
-      const res = await api.post('/sign-in', {
+      const response = await api.post('/auth/login', {
         email,
-        password,
+        password
       });
 
-      const token = res.data?.access_token;
-
-      if (token) {
-        localStorage.setItem('access_token', token);
-        setMessage('Login successful!');
-        setTimeout(() => navigate('/home'), 800);
-      } else {
-        setMessage('Login succeeded but token missing.');
-      }
+      localStorage.setItem('authToken', response.data.token);
+      navigate('/home');
     } catch (err) {
-      console.error('Login error:', err);
-      const msg =
-        err.response?.data?.message ||
-        err.response?.data?.reasons?.[0] ||
-        'Login failed. Please check your credentials.';
-      setMessage(msg);
+      console.error('Login failed:', err);
+      setError(err.response?.data?.message || 'Login failed. Please try again.');
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
-    <div className="home-container">
-      <div className="home-content">
-        <div className="home-logo"><h1>MySocial</h1></div>
-        <div className="home-box">
-          <input
-            type="text"
-            placeholder="Email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-          />
-          <input
-            type="password"
-            placeholder="Password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-          />
+    <div className="login-container">
+      <div className="login-logo">
+        MySocial
+      </div>
+      
+      <div className="login-card">
+        {error && (
+          <div className="error-message">
+            {error}
+          </div>
+        )}
+        
+        <form className="login-form" onSubmit={handleSubmit}>
+          <div className="form-group">
+            <label htmlFor="email">Email</label>
+            <input
+              type="email"
+              id="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+              autoComplete="email"
+              placeholder="Enter your email"
+            />
+          </div>
 
-          <button className="btn login-btn" onClick={handleLogin}>
-            Login
-          </button>
+          <div className="form-group">
+            <label htmlFor="password">Password</label>
+            <input
+              type="password"
+              id="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+              autoComplete="current-password"
+              placeholder="Enter your password"
+            />
+          </div>
 
-          <p
-            className="status-msg"
-            onClick={() => navigate('/register')}
-            style={{ cursor: 'pointer', marginTop: '8px' }}
+          <button 
+            type="submit" 
+            className="login-button"
+            disabled={loading || !email || !password}
           >
-            Don't have an account? <u>Register</u>
-          </p>
+            {loading ? 'Logging in...' : 'Login'}
+          </button>
+        </form>
 
-          <p className="status-msg-signin">{message}</p>
+        <div className="register-link">
+          Don't have an account?
+          <Link to="/register">Register</Link>
         </div>
       </div>
-      <footer>
-        <p>&copy; ITS122L Social Media | Mendoza, Fuensalida, Ercia, Panes, Tresvalles</p>
-      </footer>
+
+      <div className="footer">
+        © ITS122L Social Media | Mendoza, Fuensalida, Ercia, Panes, Tresvalles
+      </div>
     </div>
   );
 }
