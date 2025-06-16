@@ -26,6 +26,17 @@ export default function Login() {
 
       if (token) {
         localStorage.setItem('access_token', token);
+
+        // ✅ Get current user info
+        const userRes = await api.get('/user', {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+
+        const user = userRes.data;
+        localStorage.setItem('current_user', JSON.stringify(user));
+
         setMessage('Login successful!');
         setTimeout(() => navigate('/home'), 800);
       } else {

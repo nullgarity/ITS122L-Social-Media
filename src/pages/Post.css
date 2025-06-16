@@ -1,7 +1,7 @@
 /* Matches the .home-container styling */
 .post-container {
   min-height: 100vh;
-  background-color: lightgrey;
+  background-color: var(--background-color);
   padding: 1rem;
 }
 

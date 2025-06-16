@@ -1,6 +1,5 @@
 import React from 'react';
 import ReplyCard from './ReplyCard';
-const currentUserId = localStorage.getItem('user_id');
 
 export default function ReplyFeed({ replies, currentUserId, onDelete }) {
   if (replies.length === 0) {
@@ -17,7 +16,7 @@ export default function ReplyFeed({ replies, currentUserId, onDelete }) {
         <ReplyCard
           key={reply.id}
           reply={reply}
-          isOwner={reply.owned_by === currentUserId}
+          isOwner={String(reply.owned_by) === String(currentUserId)}
           onDelete={() => onDelete(reply.id)}
         />
       ))}

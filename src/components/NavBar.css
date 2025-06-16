@@ -6,7 +6,7 @@
   background-color: var(--navbar-bg);
   color: var(--text-color);
   border-bottom: 1px solid var(--border-color);
-  position: sticky;
+  position: relative;
   top: 0;
   z-index: 100;
 }
@@ -18,9 +18,9 @@
 }
 
 .navbar-center {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
 }
 
 .navbar-right {

@@ -26,7 +26,6 @@ export default function Post() {
 
       const data = res.data;
 
-      // Normalize likes and comments
       const normalizedPost = {
         ...data,
         likes: Array.isArray(data.likes) ? data.likes.length : 0,
@@ -34,7 +33,22 @@ export default function Post() {
       };
 
       setPost(normalizedPost);
-      setReplies(data.replies || []);
+
+      const userId = localStorage.getItem('user_id');
+      const localUser = {
+        fName: localStorage.getItem('fName'),
+        lName: localStorage.getItem('lName'),
+        profilePicture: localStorage.getItem('profilePicture') || defaultProfilePic,
+      };
+
+      const patchedReplies = (data.replies || []).map((reply) =>
+        String(reply.owned_by) === String(userId) &&
+        (!reply.user || Object.keys(reply.user).length === 0)
+          ? { ...reply, user: localUser }
+          : reply
+      );
+
+      setReplies(patchedReplies);
     } catch (err) {
       console.error('Error fetching post:', err);
     }
@@ -63,23 +77,6 @@ export default function Post() {
 
   const handleReplySuccess = async () => {
     await fetchPost();
-
-    // Inject your own user info into the last reply
-  const user = {
-    fName: localStorage.getItem('fName'),
-    lName: localStorage.getItem('lName'),
-    profilePicture: localStorage.getItem('profilePicture') || defaultProfilePic,
-  };
-  
-  const userId = localStorage.getItem('user_id');
-
-    setReplies((prev) =>
-      prev.map((reply, index) =>
-        index === prev.length - 1 && reply.owned_by === userId
-          ? { ...reply, user }
-          : reply
-      )
-    );
   };
 
   const handleDeleteReply = async (replyId) => {
@@ -94,12 +91,13 @@ export default function Post() {
     }
   };
 
-  if (!user) return (
-    <div className="loading-container">
-      <div className="spinner"></div>
-      <p>Loading...</p>
-    </div>
-  );
+  if (!user)
+    return (
+      <div className="loading-container">
+        <div className="spinner"></div>
+        <p>Loading...</p>
+      </div>
+    );
 
   return (
     <div className="post-container">
@@ -111,7 +109,7 @@ export default function Post() {
             <ReplyBox postId={id} onReplySuccess={handleReplySuccess} />
             <ReplyFeed
               replies={replies}
-              currentUserId={currentUserId}
+              currentUserId={String(currentUserId)}
               onDelete={handleDeleteReply}
             />
           </>

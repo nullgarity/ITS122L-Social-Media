@@ -5,6 +5,7 @@ import PostCard from './PostCard';
 import PostBox from './PostBox';
 import defaultProfilePic from '../assets/default-profile.png';
 import './PostFeed.css';
+import ReplyFeed from './ReplyFeed'; // assuming you're using ReplyFeed here
 
 export default function PostFeed() {
   const [posts, setPosts] = useState([]);
@@ -17,14 +18,13 @@ export default function PostFeed() {
 
   const navigate = useNavigate();
 
-  // Redirect to login if no token
   useEffect(() => {
     const token = localStorage.getItem('access_token');
     if (!token) navigate('/login');
   }, [navigate]);
 
   useEffect(() => {
-    const fetchPostsAndUsers = async () => {
+    const fetchPosts = async () => {
       setLoading(true);
       const token = localStorage.getItem('access_token');
       if (!token) {
@@ -37,28 +37,8 @@ export default function PostFeed() {
         const postRes = await api.get(`/post?page=${page + 1}&limit=11`);
         const fetchedPosts = postRes.data || [];
         const postsToShow = fetchedPosts.slice(0, 10);
-        const userMap = {};
-        const userIds = [...new Set(postsToShow.map(post => post.owned_by))];
 
-        await Promise.all(userIds.map(async (userId) => {
-          try {
-            const userRes = await api.get(`/user/${userId}`);
-            userMap[userId] = {
-              fName: userRes.data.fName,
-              lName: userRes.data.lName,
-              profilePicture: userRes.data.profile_picture || defaultProfilePic,
-            };
-          } catch (err) {
-            console.warn(`❌ Failed to fetch user for ID: ${userId}`);
-            userMap[userId] = {
-              fName: 'Unknown',
-              lName: 'User',
-              profilePicture: defaultProfilePic,
-            };
-          }
-        }));
-
-        const postsWithUser = postsToShow.map(post => {
+        const postsWithFallbackUser = postsToShow.map(post => {
           let commentsCount = 0;
           if (Array.isArray(post.replies)) {
             commentsCount = post.replies.length;
@@ -68,7 +48,7 @@ export default function PostFeed() {
 
           return {
             ...post,
-            user: userMap[post.owned_by] || {
+            user: {
               fName: 'Unknown',
               lName: 'User',
               profilePicture: defaultProfilePic,
@@ -77,12 +57,11 @@ export default function PostFeed() {
           };
         });
 
-        postsWithUser.sort((a, b) => b.id - a.id);
-
-        setPosts(postsWithUser);
+        postsWithFallbackUser.sort((a, b) => b.id - a.id);
+        setPosts(postsWithFallbackUser);
         setHasMore(fetchedPosts.length === 11);
       } catch (err) {
-        console.error('Error fetching posts/users:', err);
+        console.error('Error fetching posts:', err);
         setPosts([]);
         setHasMore(false);
       }
@@ -90,7 +69,7 @@ export default function PostFeed() {
       setLoading(false);
     };
 
-    fetchPostsAndUsers();
+    fetchPosts();
   }, [page]);
 
   const handlePrev = () => setPage(prev => Math.max(prev - 1, 0));
@@ -112,7 +91,7 @@ export default function PostFeed() {
   const handleNewPost = async (newPost) => {
     const token = localStorage.getItem('access_token');
     try {
-      const userRes = await api.get(`me`, {
+      const userRes = await api.get(`/user`, {
         headers: { Authorization: `Bearer ${token}` },
       });
 
@@ -126,14 +105,12 @@ export default function PostFeed() {
         {
           ...newPost,
           user,
-          commentsCount: Array.isArray(newPost.replies)
-            ? newPost.replies.length
-            : newPost.replies?.count || 0,
+          commentsCount: 0,
         },
         ...prev,
       ]);
     } catch (err) {
-      console.error('❌ Failed to fetch user for new post:', err.response?.data || err.message);
+      console.error('❌ Failed to fetch current user info:', err.response?.data || err.message);
       setPosts(prev => [
         {
           ...newPost,
