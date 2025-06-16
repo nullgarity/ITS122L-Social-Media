@@ -34,9 +34,20 @@ export default function Login() {
           },
         });
 
-        const user = userRes.data;
+        let user = userRes.data;
+
+        // ✅ Normalize profilePicture if it's a relative path
+        if (user.profilePicture && user.profilePicture.startsWith('/uploads')) {
+          user.profilePicture = `https://supabase-socmed.vercel.app${user.profilePicture}`;
+        }
+
+        // ✅ Optional fallback if null/empty
+        if (!user.profilePicture || user.profilePicture.trim() === '') {
+          user.profilePicture = "https://i.pinimg.com/474x/e6/e4/df/e6e4df26ba752161b9fc6a17321fa286.jpg";
+        }
+
         localStorage.setItem('current_user', JSON.stringify(user));
-        localStorage.setItem('user_id', user.id); // ✅ This is what you're missing
+        localStorage.setItem('user_id', user.id);
 
         setMessage('Login successful!');
         setTimeout(() => navigate('/home'), 800);
@@ -52,6 +63,7 @@ export default function Login() {
       setMessage(msg);
     }
   };
+
 
   return (
     <div className="home-container">

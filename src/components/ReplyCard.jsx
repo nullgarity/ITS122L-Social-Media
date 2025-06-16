@@ -5,10 +5,14 @@ import './ReplyCard.css';
 export default function ReplyCard({ reply, isOwner, onDelete }) {
   const formatDate = (iso) => new Date(iso).toLocaleString();
 
-  const user = reply.user || {
-    fName: 'Unknown',
-    lName: 'User',
-    profilePicture: defaultProfilePic,
+  const rawUser = reply.user || {};
+  const user = {
+    fName: rawUser.fName || 'Unknown',
+    lName: rawUser.lName || 'User',
+    profilePicture:
+      rawUser.profilePicture && rawUser.profilePicture.trim() !== ''
+      ? rawUser.profilePicture
+      : defaultProfilePic,
   };
 
   // 🧪 Debug logs
@@ -21,7 +25,7 @@ export default function ReplyCard({ reply, isOwner, onDelete }) {
   return (
     <div className="reply-card">
       <img
-        src={user.profilePicture || defaultProfilePic}
+        src={user.profilePicture}
         alt="Profile"
         className="reply-avatar"
       />
