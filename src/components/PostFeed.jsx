@@ -1,24 +1,31 @@
 import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import api from '../api/axios';
 import PostCard from './PostCard';
-import ReplyFeed from './ReplyFeed';
+import PostBox from './PostBox';
+import defaultProfilePic from '../assets/default-profile.png';
 import './PostFeed.css';
-// This component fetches and displays a paginated list of posts with user information and replies.
+
 export default function PostFeed() {
   const [posts, setPosts] = useState([]);
   const [page, setPage] = useState(0);
   const [hasMore, setHasMore] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [selectedPostId, setSelectedPostId] = useState(null);
   const [replies, setReplies] = useState([]);
   const [loadingReplies, setLoadingReplies] = useState(false);
-  const [loading, setLoading] = useState(false); // loading state for posts
 
-  // This state is used to indicate if the posts are currently being fetched.
+  const navigate = useNavigate();
+
+  // Redirect to login if no token
+  useEffect(() => {
+    const token = localStorage.getItem('access_token');
+    if (!token) navigate('/login');
+  }, [navigate]);
+
   useEffect(() => {
     const fetchPostsAndUsers = async () => {
       setLoading(true);
-      setSelectedPostId(null);
-      setReplies([]);
       const token = localStorage.getItem('access_token');
       if (!token) {
         setPosts([]);
@@ -27,50 +34,50 @@ export default function PostFeed() {
       }
 
       try {
-        // backend API call to fetch posts. added + 1 to align index of backend api with frontend pagination.
-        const postRes = await api.get(`/post?page=${page + 1}&limit=11`, {
-          headers: { Authorization: `Bearer ${token}` },
-        });
+        const postRes = await api.get(`/post?page=${page + 1}&limit=11`);
         const fetchedPosts = postRes.data || [];
         const postsToShow = fetchedPosts.slice(0, 10);
-
-        const userRes = await api.get('/user', {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-
-        const allUsers = Array.isArray(userRes.data)
-          ? userRes.data
-          : userRes.data.users || [];
-
         const userMap = {};
-        allUsers.forEach((user) => {
-          userMap[user.id] = {
-            fName: user.fName,
-            lName: user.lName,
-            profilePicture: user.profile_picture ||
-              'https://i.pinimg.com/474x/e6/e4/df/e6e4df26ba752161b9fc6a17321fa286.jpg',
-          };
-        });
+        const userIds = [...new Set(postsToShow.map(post => post.owned_by))];
+
+        await Promise.all(userIds.map(async (userId) => {
+          try {
+            const userRes = await api.get(`/user/${userId}`);
+            userMap[userId] = {
+              fName: userRes.data.fName,
+              lName: userRes.data.lName,
+              profilePicture: userRes.data.profile_picture || defaultProfilePic,
+            };
+          } catch (err) {
+            console.warn(`❌ Failed to fetch user for ID: ${userId}`);
+            userMap[userId] = {
+              fName: 'Unknown',
+              lName: 'User',
+              profilePicture: defaultProfilePic,
+            };
+          }
+        }));
 
         const postsWithUser = postsToShow.map(post => {
           let commentsCount = 0;
           if (Array.isArray(post.replies)) {
             commentsCount = post.replies.length;
-          } else if (typeof post.replies === 'object' && post.replies !== null && 'count' in post.replies) {
+          } else if (post.replies?.count !== undefined) {
             commentsCount = post.replies.count;
           }
 
           return {
             ...post,
-            user: userMap[post.userId] || {
+            user: userMap[post.owned_by] || {
               fName: 'Unknown',
               lName: 'User',
-              profilePicture:
-                'https://i.pinimg.com/474x/e6/e4/df/e6e4df26ba752161b9fc6a17321fa286.jpg',
+              profilePicture: defaultProfilePic,
             },
             commentsCount,
           };
         });
+
+        postsWithUser.sort((a, b) => b.id - a.id);
 
         setPosts(postsWithUser);
         setHasMore(fetchedPosts.length === 11);
@@ -79,19 +86,15 @@ export default function PostFeed() {
         setPosts([]);
         setHasMore(false);
       }
+
       setLoading(false);
     };
 
     fetchPostsAndUsers();
   }, [page]);
 
-  const handlePrev = () => {
-    if (page > 0) setPage((prev) => prev - 1);
-  };
-
-  const handleNext = () => {
-    if (hasMore) setPage((prev) => prev + 1);
-  };
+  const handlePrev = () => setPage(prev => Math.max(prev - 1, 0));
+  const handleNext = () => hasMore && setPage(prev => prev + 1);
 
   const handleShowReplies = async (postId) => {
     setSelectedPostId(postId);
@@ -100,14 +103,55 @@ export default function PostFeed() {
       const res = await api.get(`/post/${postId}`);
       setReplies(res.data.replies || []);
     } catch (err) {
-      setReplies([]);
       console.error('Failed to fetch replies:', err);
+      setReplies([]);
     }
     setLoadingReplies(false);
   };
 
+  const handleNewPost = async (newPost) => {
+    const token = localStorage.getItem('access_token');
+    try {
+      const userRes = await api.get(`me`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+
+      const user = {
+        fName: userRes.data.fName,
+        lName: userRes.data.lName,
+        profilePicture: userRes.data.profile_picture || defaultProfilePic,
+      };
+
+      setPosts(prev => [
+        {
+          ...newPost,
+          user,
+          commentsCount: Array.isArray(newPost.replies)
+            ? newPost.replies.length
+            : newPost.replies?.count || 0,
+        },
+        ...prev,
+      ]);
+    } catch (err) {
+      console.error('❌ Failed to fetch user for new post:', err.response?.data || err.message);
+      setPosts(prev => [
+        {
+          ...newPost,
+          user: {
+            fName: 'Unknown',
+            lName: 'User',
+            profilePicture: defaultProfilePic,
+          },
+          commentsCount: 0,
+        },
+        ...prev,
+      ]);
+    }
+  };
+
   return (
     <div className="post-feed-container">
+      <PostBox onPostCreated={handleNewPost} />
       {loading ? (
         <p className="no-posts-message">Loading posts...</p>
       ) : posts.length === 0 ? (
@@ -126,7 +170,7 @@ export default function PostFeed() {
                     <div style={{ padding: '1rem' }}>Loading replies...</div>
                   ) : (
                     (!replies || replies.length === 0 ||
-                      (replies.length === 1 && replies[0] && replies[0].count === 0)
+                      (replies.length === 1 && replies[0]?.count === 0)
                     ) ? (
                       <div style={{ padding: '1rem', color: '#777', fontStyle: 'italic' }}>
                         Be the first to comment.
@@ -139,7 +183,6 @@ export default function PostFeed() {
               )}
             </div>
           ))}
-
           <div className="post-feed-pagination">
             <button onClick={handlePrev} disabled={page === 0}>Previous</button>
             <span>Page {page + 1}</span>
@@ -150,4 +193,3 @@ export default function PostFeed() {
     </div>
   );
 }
-

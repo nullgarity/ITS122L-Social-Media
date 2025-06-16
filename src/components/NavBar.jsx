@@ -3,6 +3,7 @@ import './NavBar.css';
 import { useNavigate } from 'react-router-dom';
 import { useContext } from 'react';
 import { ThemeContext } from '../contexts/ThemeContext';
+import defaultProfilePic from '../assets/default-profile.png';
 
 export default function NavBar({ user }) {
   const navigate = useNavigate();
@@ -31,17 +32,22 @@ export default function NavBar({ user }) {
         <button className="theme-toggle" onClick={toggleTheme}>
           {theme === 'light' ? '🌙' : '☀️'}
         </button>
-        <div className="user-info">
-          <img
-            src={user.profile_picture || 'https://via.placeholder.com/30'}
-            alt="Profile"
-            className="profile-pic"
-          />
-          <span>{user.fName} {user.lName}</span>
-        </div>
-        <button className="nav-button mylikes-button" onClick={() => navigate('/my-likes')}>
-          My Likes
-        </button>
+
+        {user && (
+          <div
+            className="user-info"
+            onClick={() => navigate(`/profile`)}
+            style={{ cursor: 'pointer' }}
+          >
+            <img
+              src={user.profile_picture || defaultProfilePic}
+              alt="Profile"
+              className="profile-pic"
+            />
+            <span>{user.fName} {user.lName}</span>
+          </div>
+        )}
+
         <button className="nav-button logout-button" onClick={handleLogout}>
           Logout
         </button>

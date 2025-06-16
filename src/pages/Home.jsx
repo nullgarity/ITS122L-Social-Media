@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import api from '../api/axios';
 import NavBar from '../components/NavBar';
-import MakePost from '../components/MakePost';
+import PostBox from '../components/PostBox';
 import PostFeed from '../components/PostFeed';
 
 function Home() {
@@ -38,13 +38,15 @@ function Home() {
     fetchUser();
   }, [navigate]);
 
-  if (!user) return <p>Loading...</p>;
+  if (!user) return <div className="loading-container">
+      <div className="spinner"></div>
+        <p>Loading...</p>
+      </div>
 
   return (
     <>
       <NavBar user={user} />
       <div className="container">
-        <MakePost user={user} />
         <PostFeed user={user} />
       </div>
     </>

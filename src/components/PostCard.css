@@ -50,7 +50,8 @@
 .post-actions {
   display: flex;
   justify-content: space-around;
-  margin: 12px 0;
+  margin-top: 12px;
+  margin-bottom: 0; /* 👈 remove space below */
   border-top: 1px solid var(--border-color);
   border-bottom: 1px solid var(--border-color);
   padding: 8px 0;
@@ -114,4 +115,15 @@ button[type="submit"]:hover {
 
 .clickable {
   cursor: pointer;
+}
+
+.segment.liked {
+  background-color: var(--primary-color);
+  color: white;
+  font-weight: 700;
+  border-radius: 6px;
+}
+
+.segment.liked:hover {
+  background-color: var(--primary-color-hover, #0057a3);
 }
