@@ -36,6 +36,7 @@ export default function Login() {
 
         const user = userRes.data;
         localStorage.setItem('current_user', JSON.stringify(user));
+        localStorage.setItem('user_id', user.id); // ✅ This is what you're missing
 
         setMessage('Login successful!');
         setTimeout(() => navigate('/home'), 800);
