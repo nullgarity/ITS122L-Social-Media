@@ -5,7 +5,7 @@ import PostCard from './PostCard';
 import PostBox from './PostBox';
 import defaultProfilePic from '../assets/default-profile.png';
 import './PostFeed.css';
-import ReplyFeed from './ReplyFeed'; // assuming you're using ReplyFeed here
+import ReplyFeed from './ReplyFeed';
 
 export default function PostFeed() {
   const [posts, setPosts] = useState([]);
@@ -33,12 +33,40 @@ export default function PostFeed() {
         return;
       }
 
+      let currentUser = null;
+      try {
+        const userData = localStorage.getItem('current_user');
+        currentUser = userData ? JSON.parse(userData) : null;
+      } catch (e) {
+        console.error('Error parsing current_user:', e);
+      }
+
       try {
         const postRes = await api.get(`/post?page=${page + 1}&limit=11`);
         const fetchedPosts = postRes.data || [];
         const postsToShow = fetchedPosts.slice(0, 10);
 
-        const postsWithFallbackUser = postsToShow.map(post => {
+        const postsWithUserInfo = postsToShow.map((post) => {
+          let user;
+
+          if (currentUser && post.owned_by === currentUser.id) {
+            user = {
+              fName: currentUser.fName,
+              lName: currentUser.lName,
+              profilePicture: currentUser.profilePicture || defaultProfilePic,
+            };
+          } else {
+            user = {
+              fName: 'Unknown',
+              lName: 'User',
+              profilePicture: defaultProfilePic,
+            };
+          }
+
+          if (user.profilePicture.startsWith('/uploads')) {
+            user.profilePicture = `https://supabase-socmed.vercel.app${user.profilePicture}`;
+          }
+
           let commentsCount = 0;
           if (Array.isArray(post.replies)) {
             commentsCount = post.replies.length;
@@ -48,17 +76,13 @@ export default function PostFeed() {
 
           return {
             ...post,
-            user: {
-              fName: 'Unknown',
-              lName: 'User',
-              profilePicture: defaultProfilePic,
-            },
+            user,
             commentsCount,
           };
         });
 
-        postsWithFallbackUser.sort((a, b) => b.id - a.id);
-        setPosts(postsWithFallbackUser);
+        postsWithUserInfo.sort((a, b) => b.id - a.id);
+        setPosts(postsWithUserInfo);
         setHasMore(fetchedPosts.length === 11);
       } catch (err) {
         console.error('Error fetching posts:', err);
@@ -72,8 +96,8 @@ export default function PostFeed() {
     fetchPosts();
   }, [page]);
 
-  const handlePrev = () => setPage(prev => Math.max(prev - 1, 0));
-  const handleNext = () => hasMore && setPage(prev => prev + 1);
+  const handlePrev = () => setPage((prev) => Math.max(prev - 1, 0));
+  const handleNext = () => hasMore && setPage((prev) => prev + 1);
 
   const handleShowReplies = async (postId) => {
     setSelectedPostId(postId);
@@ -95,23 +119,36 @@ export default function PostFeed() {
         headers: { Authorization: `Bearer ${token}` },
       });
 
+      let profilePicture = userRes.data.profile_picture || defaultProfilePic;
+
+      if (profilePicture.startsWith('/uploads')) {
+        profilePicture = `https://supabase-socmed.vercel.app${profilePicture}`;
+      }
+
       const user = {
         fName: userRes.data.fName,
         lName: userRes.data.lName,
-        profilePicture: userRes.data.profile_picture || defaultProfilePic,
+        profilePicture,
       };
 
-      setPosts(prev => [
+      // Update localStorage user info
+      localStorage.setItem(
+        'current_user',
+        JSON.stringify({ ...user, id: userRes.data.id })
+      );
+
+      setPosts((prev) => [
         {
           ...newPost,
           user,
+          owned_by: userRes.data.id,
           commentsCount: 0,
         },
         ...prev,
       ]);
     } catch (err) {
       console.error('❌ Failed to fetch current user info:', err.response?.data || err.message);
-      setPosts(prev => [
+      setPosts((prev) => [
         {
           ...newPost,
           user: {
@@ -145,25 +182,25 @@ export default function PostFeed() {
                 <div>
                   {loadingReplies ? (
                     <div style={{ padding: '1rem' }}>Loading replies...</div>
+                  ) : !replies || replies.length === 0 ? (
+                    <div style={{ padding: '1rem', color: '#777', fontStyle: 'italic' }}>
+                      Be the first to comment.
+                    </div>
                   ) : (
-                    (!replies || replies.length === 0 ||
-                      (replies.length === 1 && replies[0]?.count === 0)
-                    ) ? (
-                      <div style={{ padding: '1rem', color: '#777', fontStyle: 'italic' }}>
-                        Be the first to comment.
-                      </div>
-                    ) : (
-                      <ReplyFeed replies={replies} />
-                    )
+                    <ReplyFeed replies={replies} />
                   )}
                 </div>
               )}
             </div>
           ))}
           <div className="post-feed-pagination">
-            <button onClick={handlePrev} disabled={page === 0}>Previous</button>
+            <button onClick={handlePrev} disabled={page === 0}>
+              Previous
+            </button>
             <span>Page {page + 1}</span>
-            <button onClick={handleNext} disabled={!hasMore}>Next</button>
+            <button onClick={handleNext} disabled={!hasMore}>
+              Next
+            </button>
           </div>
         </>
       )}
