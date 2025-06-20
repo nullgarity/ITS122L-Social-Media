@@ -63,17 +63,34 @@ export default function PostFeed() {
 
   // Fetch posts
   useEffect(() => {
-    const fetchPosts = async () => {
+    // Fetch ALL posts from all pages, then filter by user
+    const fetchAllPosts = async () => {
       setLoading(true);
+      let allPosts = [];
+      let pageNum = 1;
+      let keepFetching = true;
+      const PAGE_LIMIT = 50;
+      const MAX_PAGES = 100; 
+
       try {
-        const postRes = await api.get(`/post?page=${page + 1}&limit=11`);
-        const fetchedPosts = postRes.data || [];
-        const postsToShow = fetchedPosts.slice(0, 10);
+        while (keepFetching && pageNum <= MAX_PAGES) {
+          const res = await api.get(`/post?page=${pageNum}&limit=${PAGE_LIMIT}`);
+          const posts = res.data || [];
+          if (posts.length === 0) {
+            keepFetching = false;
+          } else {
+            allPosts = allPosts.concat(posts);
+            pageNum += 1;
+          }
+        }
+        // Filter to only current user's posts
+        const userPosts = currentUser
+          ? allPosts.filter(post => post.owned_by === currentUser.id)
+          : [];
 
-        const postsWithUserInfo = postsToShow.map((post) => {
+        
+        const postsWithUserInfo = userPosts.map((post) => {
           let user;
-
-          // Use user info from post if available
           if (post.user && post.user.fName && post.user.lName) {
             user = {
               fName: post.user.fName,
@@ -96,22 +113,18 @@ export default function PostFeed() {
               profilePicture: defaultProfilePic,
             };
           }
-
-          // Normalize profilePicture URL if needed
           if (
             user.profilePicture &&
             user.profilePicture.startsWith('/uploads')
           ) {
             user.profilePicture = `https://supabase-socmed.vercel.app${user.profilePicture}`;
           }
-
           let commentsCount = 0;
           if (Array.isArray(post.replies)) {
             commentsCount = post.replies.length;
           } else if (post.replies?.count !== undefined) {
             commentsCount = post.replies.count;
           }
-
           return {
             ...post,
             user,
@@ -121,20 +134,25 @@ export default function PostFeed() {
 
         postsWithUserInfo.sort((a, b) => b.id - a.id);
         setPosts(postsWithUserInfo);
-        setHasMore(fetchedPosts.length === 11);
+        setHasMore(postsWithUserInfo.length > (page + 1) * 10);
       } catch (err) {
         console.error('Error fetching posts:', err);
         setPosts([]);
         setHasMore(false);
       }
-
       setLoading(false);
     };
 
     if (currentUser) {
-      fetchPosts();
+      fetchAllPosts();
     }
-  }, [page, currentUser]);
+    // eslint-disable-next-line
+  }, [currentUser]);
+
+  // Update hasMore when page or posts change
+  useEffect(() => {
+    setHasMore(posts.length > (page + 1) * 10);
+  }, [page, posts]);
 
   const handlePrev = () => setPage((prev) => Math.max(prev - 1, 0));
   const handleNext = () => hasMore && setPage((prev) => prev + 1);
@@ -212,7 +230,7 @@ export default function PostFeed() {
           <p className="no-posts-message">No posts found.</p>
         ) : (
           <>
-            {posts.map((post) => (
+            {posts.slice(page * 10, (page + 1) * 10).map((post) => (
               <div key={post.id}>
                 <PostCard
                   post={post}
