@@ -26,25 +26,45 @@ export default function Post() {
 
       const data = res.data;
 
-      const normalizedPost = {
+      // Get local user info
+      const localUser = JSON.parse(localStorage.getItem('current_user') || '{}');
+      const userId = localUser?.id || localStorage.getItem('user_id');
+
+      // Patch post user if missing and owned by current user
+      let patchedPost = {
         ...data,
         likes: Array.isArray(data.likes) ? data.likes.length : 0,
         commentsCount: Array.isArray(data.replies) ? data.replies.length : 0,
       };
+      if (
+        String(data.owned_by) === String(userId) &&
+        (!data.user || Object.keys(data.user).length === 0)
+      ) {
+        patchedPost.user = {
+          fName: localUser.fName,
+          lName: localUser.lName,
+          profilePicture:
+            localUser.profilePicture ||
+            "https://i.pinimg.com/474x/e6/e4/df/e6e4df26ba752161b9fc6a17321fa286.jpg",
+        };
+      }
 
-      setPost(normalizedPost);
+      setPost(patchedPost);
 
-      const userId = localStorage.getItem('user_id');
-      const localUser = {
-        fName: localStorage.getItem('fName'),
-        lName: localStorage.getItem('lName'),
-        profilePicture: localStorage.getItem('profilePicture') || defaultProfilePic,
-      };
-
+      
       const patchedReplies = (data.replies || []).map((reply) =>
         String(reply.owned_by) === String(userId) &&
         (!reply.user || Object.keys(reply.user).length === 0)
-          ? { ...reply, user: localUser }
+          ? {
+              ...reply,
+              user: {
+                fName: localUser.fName,
+                lName: localUser.lName,
+                profilePicture:
+                  localUser.profilePicture ||
+                  "https://i.pinimg.com/474x/e6/e4/df/e6e4df26ba752161b9fc6a17321fa286.jpg",
+              },
+            }
           : reply
       );
 
