@@ -24,7 +24,10 @@ export default function ReplyFeed({ replies, currentUserId, onDelete }) {
             ? {
                 fName: currentUser.fName,
                 lName: currentUser.lName,
-                profilePicture: currentUser.profilePicture,
+                profilePicture:
+                  currentUser.profilePicture && currentUser.profilePicture.trim() !== ''
+                    ? currentUser.profilePicture
+                    : "https://i.pinimg.com/474x/e6/e4/df/e6e4df26ba752161b9fc6a17321fa286.jpg",
               }
             : reply.user,
         };

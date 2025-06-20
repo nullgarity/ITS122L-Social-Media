@@ -6,6 +6,7 @@ import PostBox from '../components/PostBox';
 import defaultProfilePic from '../assets/default-profile.png';
 import '../components/PostFeed.css';
 import ReplyFeed from '../components/ReplyFeed';
+import NavBar from '../components/NavBar';
 
 export default function PostFeed() {
   const [posts, setPosts] = useState([]);
@@ -72,8 +73,17 @@ export default function PostFeed() {
         const postsWithUserInfo = postsToShow.map((post) => {
           let user;
 
-          // Use currentUser if it's your post
-          if (currentUser && post.owned_by === currentUser.id) {
+          // Use user info from post if available
+          if (post.user && post.user.fName && post.user.lName) {
+            user = {
+              fName: post.user.fName,
+              lName: post.user.lName,
+              profilePicture:
+                post.user.profile_picture ||
+                post.user.profilePicture ||
+                defaultProfilePic,
+            };
+          } else if (currentUser && post.owned_by === currentUser.id) {
             user = {
               fName: currentUser.fName,
               lName: currentUser.lName,
@@ -87,7 +97,11 @@ export default function PostFeed() {
             };
           }
 
-          if (user.profilePicture.startsWith('/uploads')) {
+          // Normalize profilePicture URL if needed
+          if (
+            user.profilePicture &&
+            user.profilePicture.startsWith('/uploads')
+          ) {
             user.profilePicture = `https://supabase-socmed.vercel.app${user.profilePicture}`;
           }
 
@@ -188,46 +202,49 @@ export default function PostFeed() {
   };
 
   return (
-    <div className="post-feed-container">
-      <PostBox onPostCreated={handleNewPost} />
-      {loading ? (
-        <p className="no-posts-message">Loading posts...</p>
-      ) : posts.length === 0 ? (
-        <p className="no-posts-message">No posts found.</p>
-      ) : (
-        <>
-          {posts.map((post) => (
-            <div key={post.id}>
-              <PostCard
-                post={post}
-                onCommentClick={() => handleShowReplies(post.id)}
-              />
-              {selectedPostId === post.id && (
-                <div>
-                  {loadingReplies ? (
-                    <div style={{ padding: '1rem' }}>Loading replies...</div>
-                  ) : !replies || replies.length === 0 ? (
-                    <div style={{ padding: '1rem', color: '#777', fontStyle: 'italic' }}>
-                      Be the first to comment.
-                    </div>
-                  ) : (
-                    <ReplyFeed replies={replies} />
-                  )}
-                </div>
-              )}
+    <>
+      <NavBar user={currentUser} />
+      <div className="post-feed-container">
+        <PostBox onPostCreated={handleNewPost} />
+        {loading ? (
+          <p className="no-posts-message">Loading posts...</p>
+        ) : posts.length === 0 ? (
+          <p className="no-posts-message">No posts found.</p>
+        ) : (
+          <>
+            {posts.map((post) => (
+              <div key={post.id}>
+                <PostCard
+                  post={post}
+                  onCommentClick={() => handleShowReplies(post.id)}
+                />
+                {selectedPostId === post.id && (
+                  <div>
+                    {loadingReplies ? (
+                      <div style={{ padding: '1rem' }}>Loading replies...</div>
+                    ) : !replies || replies.length === 0 ? (
+                      <div style={{ padding: '1rem', color: '#777', fontStyle: 'italic' }}>
+                        Be the first to comment.
+                      </div>
+                    ) : (
+                      <ReplyFeed replies={replies} />
+                    )}
+                  </div>
+                )}
+              </div>
+            ))}
+            <div className="post-feed-pagination">
+              <button onClick={handlePrev} disabled={page === 0}>
+                Previous
+              </button>
+              <span>Page {page + 1}</span>
+              <button onClick={handleNext} disabled={!hasMore}>
+                Next
+              </button>
             </div>
-          ))}
-          <div className="post-feed-pagination">
-            <button onClick={handlePrev} disabled={page === 0}>
-              Previous
-            </button>
-            <span>Page {page + 1}</span>
-            <button onClick={handleNext} disabled={!hasMore}>
-              Next
-            </button>
-          </div>
-        </>
-      )}
-    </div>
+          </>
+        )}
+      </div>
+    </>
   );
 }
